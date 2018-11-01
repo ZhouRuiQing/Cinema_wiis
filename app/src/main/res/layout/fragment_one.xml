@@ -21,4 +21,19 @@
         android:layout_margin="30dp"
         android:id="@+id/view_pagerone"
         ></android.support.v4.view.ViewPager>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/simp_View"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/one_Rcecyler_View"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ></android.support.v7.widget.RecyclerView>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
 </RelativeLayout>

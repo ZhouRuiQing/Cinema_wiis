@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_movie_image_three"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        app:actualImageScaleType="fitCenter"
+        />
+    <TextView
+        android:id="@+id/tv_title_three"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"
+        />
+
+    <TextView
+        android:layout_marginTop="100dp"
+        android:id="@+id/tv_dis_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1km" />
+
+</LinearLayout>

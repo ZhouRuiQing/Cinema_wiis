@@ -8,12 +8,16 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bwie.cinema_wiis.R;
-import com.bwie.cinema_wiis.mvp.view.apdater.MovieFragmentApdater;
 import com.bwie.cinema_wiis.fragment.fragment.OneFragment;
 import com.bwie.cinema_wiis.fragment.fragment.ThreFragment;
 import com.bwie.cinema_wiis.fragment.fragment.TwoFragment;
+import com.bwie.cinema_wiis.mvp.view.apdater.MovieFragmentApdater;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -32,6 +36,11 @@ public class MovieFregment extends Fragment {
     @BindView(R.id.vp_tablayout)
     ViewPager vpTablayout;
     Unbinder unbinder;
+    @BindView(R.id.tv_top_movie)
+    TextView tvTopMovie;
+    @BindView(R.id.iv_cut)
+    ImageView ivCut;
+    private int page=0;
 
     public MovieFregment() {
         // Required empty public constructor
@@ -45,6 +54,13 @@ public class MovieFregment extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_movie_fregment, container, false);
         unbinder = ButterKnife.bind(this, inflate);
         initView();
+        ivCut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                page++;
+                EventBus.getDefault().post(page);
+            }
+        });
         return inflate;
     }
 

@@ -3,8 +3,11 @@ package com.bwie.cinema_wiis.fragment.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +19,8 @@ import com.bwie.cinema_wiis.mvp.model.bean.ComingMovie;
 import com.bwie.cinema_wiis.mvp.present.ComingPresent;
 import com.bwie.cinema_wiis.mvp.view.IView.IComingView;
 import com.bwie.cinema_wiis.mvp.view.ViewpageTransformer;
+import com.bwie.cinema_wiis.mvp.view.apdater.ComingApdater;
+import com.bwie.cinema_wiis.mvp.view.apdater.MovieApdater;
 import com.bwie.cinema_wiis.mvp.view.apdater.viewpager.MyComingAdapter;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.AbstractDraweeController;
@@ -23,6 +28,11 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.postprocessors.IterativeBoxBlurPostProcessor;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -42,6 +52,10 @@ public class ThreFragment extends Fragment implements IComingView {
     ViewPager viewPagerThree;
     @BindView(R.id.lin_layout_three)
     RelativeLayout linLayoutThree;
+    @BindView(R.id.one_Rcecyler_View_three)
+    RecyclerView ThreeRcecylerView;
+    @BindView(R.id.simp_View_three)
+    SmartRefreshLayout simpViewThree;
     private ComingPresent comingPresent;
     private Unbinder unbinder;
 
@@ -59,6 +73,12 @@ public class ThreFragment extends Fragment implements IComingView {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
     private void initView() {
 
         comingPresent = new ComingPresent(this);
@@ -70,12 +90,18 @@ public class ThreFragment extends Fragment implements IComingView {
     public void Sueecss(ComingMovie comingMovie) {
 
         final List<ComingMovie.ResultBean> list = comingMovie.getResult();
+        ComingApdater apdater = new ComingApdater(getActivity(), list);
+        ThreeRcecylerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        ThreeRcecylerView.setAdapter(apdater);
+        threeViewpager(list);
+    }
 
+    private void threeViewpager(final List<ComingMovie.ResultBean> list) {
         viewPagerThree.setAdapter(new MyComingAdapter(list, getActivity()));
         viewPagerThree.setPageMargin(20);
         viewPagerThree.setOffscreenPageLimit(list.size());
         //设置画廊模式
-        viewPagerThree.setPageTransformer(true,new ViewpageTransformer());
+        viewPagerThree.setPageTransformer(true, new ViewpageTransformer());
 
         //左右都有图
         viewPagerThree.setCurrentItem(1);
@@ -88,6 +114,8 @@ public class ThreFragment extends Fragment implements IComingView {
             }
         });
 
+        String imageUrl = list.get(0).getImageUrl();
+        showUrlBlur(imageUrl);
         viewPagerThree.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -125,6 +153,21 @@ public class ThreFragment extends Fragment implements IComingView {
         }
     }
 
+    //黏性事件
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getEvent(Integer integer) {
+
+        if (integer%2==0) {
+            simpViewThree.setVisibility(View.GONE);
+            simpViewgsThree.setVisibility(View.VISIBLE);
+            viewPagerThree.setVisibility(View.VISIBLE);
+        } else {
+            viewPagerThree.setVisibility(View.GONE);
+            simpViewThree.setVisibility(View.VISIBLE);
+            simpViewgsThree.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void Error(String msg) {
 
@@ -134,6 +177,7 @@ public class ThreFragment extends Fragment implements IComingView {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        EventBus.getDefault().unregister(this);
     }
 
 }
